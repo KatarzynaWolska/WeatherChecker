@@ -45,6 +45,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.weatherchecker.CurrentWeatherConstants.CITY_NAME;
 import static com.example.weatherchecker.CurrentWeatherConstants.DESCRIPTION;
@@ -240,12 +241,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor cursor = (Cursor) listView.getItemAtPosition(i);
+                Map<String, String> cityCoords = dataAdapter.getCityCoords(cursor);
                 String cityID = dataAdapter.getCityId(cursor);
-
-                //currentCityId = cityID;
+                String cityLat = cityCoords.get("LAT");
+                String cityLon = cityCoords.get("LON");
 
                 SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
                 editor.putString(LAST_CITY_ID, cityID);
+                editor.putString(LAST_LOCATION_LAT, cityLat);
+                editor.putString(LAST_LOCATION_LON, cityLon);
                 editor.apply();
 
                 if(cityID == null) {
@@ -269,15 +273,16 @@ public class MainActivity extends AppCompatActivity {
 
                 SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-                if (!preferences.getString(LAST_CITY_ID, "").isEmpty()) {
-                    myIntent.putExtra("city_id", preferences.getString(LAST_CITY_ID, ""));
-                    startActivity(myIntent);
-                }
-                else if (!preferences.getString(LAST_LOCATION_LAT, "").isEmpty() && !preferences.getString(LAST_LOCATION_LON, "").isEmpty()) {
+                if (!preferences.getString(LAST_LOCATION_LAT, "").isEmpty() && !preferences.getString(LAST_LOCATION_LON, "").isEmpty()) {
                     myIntent.putExtra("lat", preferences.getString(LAST_LOCATION_LAT, ""));
                     myIntent.putExtra("lon", preferences.getString(LAST_LOCATION_LON, ""));
                     startActivity(myIntent);
                 }
+                else if (!preferences.getString(LAST_CITY_ID, "").isEmpty()) {
+                    myIntent.putExtra("city_id", preferences.getString(LAST_CITY_ID, ""));
+                    startActivity(myIntent);
+                }
+
             }
         });
 

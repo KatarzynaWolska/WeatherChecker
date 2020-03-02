@@ -6,6 +6,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataAdapter {
 
@@ -149,6 +151,42 @@ public class DataAdapter {
         close();
 
         return response;
+    }
+
+    public Map<String, String> getCityCoords(Cursor cursor) {
+
+        open();
+        boolean isCursorEmpty = true;
+        String sql = "SELECT " + COORD_LON_COL + " ," + COORD_LAT_COL + " FROM " + TABLE_NAME + " WHERE " + NAME_COL + " = ?";
+
+        String cityName = cursor.getString(cursor.getColumnIndex(NAME_COL));
+
+        Cursor crs = database.rawQuery(sql, new String[] {cityName});
+
+        if (crs != null)
+        {
+            isCursorEmpty = crs.moveToNext();
+        }
+        else
+        {
+            return null;
+        }
+
+        if(!isCursorEmpty) {
+            return null;
+        }
+
+        String lon = cursor.getString(cursor.getColumnIndex(COORD_LON_COL));
+        String lat = cursor.getString(cursor.getColumnIndex(COORD_LAT_COL));
+
+        crs.close();
+        close();
+
+        Map<String, String> coords = new HashMap<>();
+        coords.put("LON", lon);
+        coords.put("LAT", lat);
+
+        return coords;
     }
 
 }
