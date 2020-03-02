@@ -454,32 +454,44 @@ public class MainActivity extends AppCompatActivity {
                 String value;
 
                 for (String mainParameter : mainParameters) {
-                    value = jsonObject.getJSONObject(MAIN).getString(mainParameter);
-                    values.put(mainParameter, value);
+                    if(jsonObject.getJSONObject(MAIN).has(mainParameter)) {
+                        value = jsonObject.getJSONObject(MAIN).getString(mainParameter);
+                        values.put(mainParameter, value);
+                    }
                 }
 
                 for (String windParameter : windParameters) {
-                    value = jsonObject.getJSONObject(WIND).getString(windParameter);
-                    values.put(windParameter, value);
+                    if(jsonObject.getJSONObject(WIND).has(windParameter)) {
+                        value = jsonObject.getJSONObject(WIND).getString(windParameter);
+                        values.put(windParameter, value);
+                    }
                 }
 
                 for (String cloudsParameter : cloudsParameters) {
-                    value = jsonObject.getJSONObject(CLOUDS).getString(cloudsParameter);
-                    values.put(cloudsParameter, value);
+                    if(jsonObject.getJSONObject(CLOUDS).has(cloudsParameter)) {
+                        value = jsonObject.getJSONObject(CLOUDS).getString(cloudsParameter);
+                        values.put(cloudsParameter, value);
+                    }
                 }
 
                 for (String geoCoord : geoCoords) {
-                    value = jsonObject.getJSONObject(COORD).getString(geoCoord);
-                    values.put(geoCoord, value);
+                    if(jsonObject.getJSONObject(COORD).has(geoCoord)) {
+                        value = jsonObject.getJSONObject(COORD).getString(geoCoord);
+                        values.put(geoCoord, value);
+                    }
                 }
 
                 for (String weatherParameter : weatherParameters) {
-                    value = jsonObject.getJSONArray(WEATHER).getJSONObject(0).getString(weatherParameter);
-                    values.put(weatherParameter, value);
+                    if(jsonObject.getJSONArray(WEATHER).getJSONObject(0).has(weatherParameter)) {
+                        value = jsonObject.getJSONArray(WEATHER).getJSONObject(0).getString(weatherParameter);
+                        values.put(weatherParameter, value);
+                    }
                 }
 
-                value = jsonObject.getString(CITY_NAME);
-                values.put(CITY_NAME, value);
+                if(jsonObject.has(CITY_NAME)) {
+                    value = jsonObject.getString(CITY_NAME);
+                    values.put(CITY_NAME, value);
+                }
 
             } catch (JSONException e) {
                 Log.e("ERROR", e.getMessage(), e);
@@ -493,7 +505,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
             try {
-                //URL url = new URL(API_URL_CITY_ID + strings[0] + "&units=metric&APPID=" + API_KEY);
                 if (strings.length == 0) {
                     return getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getString(LAST_JSON, "");
                 }
@@ -539,18 +550,18 @@ public class MainActivity extends AppCompatActivity {
             weatherTable.setVisibility(View.VISIBLE);
             forecastButton.setVisibility(View.VISIBLE);
 
-            humidityText.setText(map.get(HUMIDITY) + HUMIDITY_UNIT);
-            pressureText.setText(map.get(PRESSURE) + PRESSURE_UNIT);
-            tempMaxText.setText(String.format("%.1f", Double.parseDouble(map.get(TEMP_MAX))) + TEMP_UNIT);
-            tempMinText.setText(String.format("%.1f", Double.parseDouble(map.get(TEMP_MIN))) + TEMP_UNIT);
-            cloudinessText.setText(map.get(CLOUDINESS) + CLOUDINESS_UNIT);
-            windSpeedText.setText(map.get(WIND_SPEED) + WIND_SPEED_UNIT);
-            windDegreeText.setText(map.get(WIND_DEGREES) + WIND_DEGREES_UNIT);
-            coordsText.setText("[" + map.get(COORD_LAT) + ", " + map.get(COORD_LON) + "]");
-            cityNameText.setText(map.get(CITY_NAME));
+            humidityText.setText((map.get(HUMIDITY)) != null ? map.get(HUMIDITY) + HUMIDITY_UNIT : "no info");
+            pressureText.setText((map.get(PRESSURE)) != null ? map.get(PRESSURE) + PRESSURE_UNIT : "no info");
+            tempMaxText.setText((map.get(TEMP_MAX)) != null ? String.format("%.1f", Double.parseDouble(map.get(TEMP_MAX))) + TEMP_UNIT : "no info");
+            tempMinText.setText((map.get(TEMP_MIN)) != null ? String.format("%.1f", Double.parseDouble(map.get(TEMP_MIN))) + TEMP_UNIT : "no info");
+            cloudinessText.setText((map.get(CLOUDINESS)) != null ? map.get(CLOUDINESS) + CLOUDINESS_UNIT : "no info");
+            windSpeedText.setText((map.get(WIND_SPEED)) != null ? map.get(WIND_SPEED) + WIND_SPEED_UNIT : "no info");
+            windDegreeText.setText((map.get(WIND_DEGREES)) != null ? map.get(WIND_DEGREES) + WIND_DEGREES_UNIT : "no info");
+            coordsText.setText((map.get(COORD_LAT) != null || map.get(COORD_LON) != null) ? "[" + map.get(COORD_LAT) + ", " + map.get(COORD_LON) + "]" : "no info");
+            cityNameText.setText((map.get(CITY_NAME)) != null ? map.get(CITY_NAME) : "no info");
             weatherIcon.setImageDrawable(getIcon(map.get(ICON_ID)));
-            temperatureText.setText(String.format("%.0f", Double.parseDouble(map.get(TEMP))) + TEMP_UNIT);
-            weatherDescText.setText(map.get(DESCRIPTION));
+            temperatureText.setText((map.get(TEMP)) != null ? String.format("%.0f", Double.parseDouble(map.get(TEMP))) + TEMP_UNIT : "no info");
+            weatherDescText.setText((map.get(DESCRIPTION)) != null ? map.get(DESCRIPTION) : "no info");
         }
 
         private Drawable getIcon(String name) {
